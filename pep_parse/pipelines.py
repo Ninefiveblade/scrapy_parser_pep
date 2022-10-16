@@ -13,13 +13,14 @@ import datetime as dt
 from .constants import DATETIME_FORMAT
 
 BASE_DIR = Path(__file__).parent / "results"
-BASE_DIR.mkdir(exist_ok=True)
 FILENAME = "status_summary_{}.csv"
 
 
 class PepParsePipeline:
     """Класс пайплайна, получает item
     и сохраняет его в файл директории results."""
+    def __init__(self):
+        BASE_DIR.mkdir(exist_ok=True)
 
     def open_spider(self, spider):
         """Инициализируем счетчик статусов."""
@@ -38,10 +39,9 @@ class PepParsePipeline:
         now = dt.datetime.now()
         file_name = FILENAME.format(now.strftime(DATETIME_FORMAT))
         with open(BASE_DIR / file_name, "w", encoding="utf-8") as file:
-            writer = csv.writer(
+            csv.writer(
                 file, csv.unix_dialect, quoting=csv.QUOTE_MINIMAL
-            )
-            writer.writerows([
+            ).writerows([
                 ("Статус", "Количество"),
                 *self.status_counter.items(),
                 ("Total", sum(self.status_counter.values()))
