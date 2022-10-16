@@ -4,20 +4,23 @@ import scrapy
 
 from pep_parse.items import PepParseItem
 
+PEP_DOMAIN = 'peps.python.org'
+PEP_URL = 'https://{}/'
+
 
 class PepSpider(scrapy.Spider):
     """Объявляем паука и создаем атрибуты."""
 
     name = 'pep'
-    allowed_domains = ['peps.python.org']
-    start_urls = ['https://peps.python.org/']
+    allowed_domains = [PEP_DOMAIN]
+    start_urls = [PEP_URL.format(PEP_DOMAIN)]
 
     def parse_pep(self, response):
         """Собираем информацию с полученных страниц."""
-
+        page_title = response.css('.page-title::text')
         data = {
-            'number': response.css('.page-title::text').get().split(' ')[1],
-            'name': response.css('.page-title::text').get(),
+            'number': page_title.get().split(' ')[1],
+            'name': page_title.get(),
             'status': response.css('dt:contains("Status") + dd::text').get()
         }
         yield PepParseItem(data)
@@ -28,6 +31,6 @@ class PepSpider(scrapy.Spider):
         all_hrefs = response.css('#numerical-index a::attr(href)').getall()
         for href in all_hrefs:
             yield response.follow(
-                urljoin(self.start_urls[0], href),
+                urljoin(PEP_URL.format(PEP_DOMAIN), href),
                 callback=self.parse_pep
             )
