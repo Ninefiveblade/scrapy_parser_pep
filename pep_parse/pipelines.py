@@ -12,10 +12,9 @@ import datetime as dt
 
 from .constants import DATETIME_FORMAT
 
-BASE_DIR = Path(__file__).parent
+BASE_DIR = Path(__file__).parent / "results"
+BASE_DIR.mkdir(exist_ok=True)
 FILENAME = "status_summary_{}.csv"
-RESULT_DIR = BASE_DIR / "results"
-RESULT_DIR.mkdir(exist_ok=True)
 
 
 class PepParsePipeline:
@@ -38,8 +37,7 @@ class PepParsePipeline:
 
         now = dt.datetime.now()
         file_name = FILENAME.format(now.strftime(DATETIME_FORMAT))
-        file_path = RESULT_DIR / file_name
-        with open(file_path, "w", encoding="utf-8") as file:
+        with open(BASE_DIR / file_name, "w", encoding="utf-8") as file:
             writer = csv.writer(
                 file, csv.unix_dialect, quoting=csv.QUOTE_MINIMAL
             )
