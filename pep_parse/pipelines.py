@@ -14,7 +14,8 @@ from .constants import DATETIME_FORMAT
 
 BASE_DIR = Path(__file__).parent
 FILENAME = "status_summary_{}.csv"
-results_dir = BASE_DIR / "results"
+RESULT_DIR = BASE_DIR / "results"
+RESULT_DIR.mkdir(exist_ok=True)
 
 
 class PepParsePipeline:
@@ -37,9 +38,13 @@ class PepParsePipeline:
 
         now = dt.datetime.now()
         file_name = FILENAME.format(now.strftime(DATETIME_FORMAT))
-        file_path = BASE_DIR / "results" / file_name
+        file_path = RESULT_DIR / file_name
         with open(file_path, "w", encoding="utf-8") as file:
-            writer = csv.writer(file, csv.unix_dialect)
-            writer.writerow(("Статус", "Количество"))
-            writer.writerows(self.status_counter.items())
-            writer.writerow(("Total", sum(self.status_counter.values())))
+            writer = csv.writer(
+                file, csv.unix_dialect, quoting=csv.QUOTE_MINIMAL
+            )
+            writer.writerows([
+                ("Статус", "Количество"),
+                *self.status_counter.items(),
+                ("Total", sum(self.status_counter.values()))
+            ])

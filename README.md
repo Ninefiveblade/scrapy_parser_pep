@@ -26,4 +26,4 @@ Scrapy-2.5.1, Python3.9.7
 [LICENSE MIT](LICENSE)
 
 # Aвтор:
-Алексеев Иван @Ninefiveblade
+[Алексеев Иван](https://github.com/Ninefiveblade)
